@@ -15,10 +15,13 @@ export type Prog = {
 const KEY = 'chu3-prog-v1';
 export const today = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
+const EXAM_DATE = '2026-11-06';
+const fixExam = (p: Prog): Prog => (p.exam.set || p.exam.date === EXAM_DATE ? p : { ...p, exam: { ...p.exam, date: EXAM_DATE } });
+
 export function blank(): Prog {
   return {
     units: {}, wrong: {}, days: {}, tests: [],
-    exam: { date: '2026-11-26', set: false, scope: DEFAULT_SCOPE },
+    exam: { date: EXAM_DATE, set: false, scope: DEFAULT_SCOPE },
     todo: [
       { text: '数学のワーク（テスト範囲）を全部やる', done: false },
       { text: '英語の教科書本文を音読・ノートに写す', done: false },
@@ -31,7 +34,7 @@ export function blank(): Prog {
 export function load(): Prog {
   try {
     const s = localStorage.getItem(KEY);
-    if (s) return { ...blank(), ...JSON.parse(s) };
+    if (s) return fixExam({ ...blank(), ...JSON.parse(s) });
   } catch { /* ignore */ }
   return blank();
 }
@@ -105,5 +108,5 @@ export function merge(a: Prog, b: Prog): Prog {
     return true;
   });
   const newer = (a.updated || 0) >= (b.updated || 0) ? a : b;
-  return { ...newer, units, days, tests, updated: Math.max(a.updated || 0, b.updated || 0) };
+  return fixExam({ ...newer, units, days, tests, updated: Math.max(a.updated || 0, b.updated || 0) });
 }
