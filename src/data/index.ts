@@ -4,9 +4,15 @@ import { science } from './science';
 import { social } from './social';
 import { japanese } from './japanese';
 import { gika } from './gika';
+import { EXTRA } from './extra';
 import { type Q, type Unit, type Subject, fromRaw, shuffle, pick } from './types';
 
 export const SUBJECTS: Subject[] = [math, english, science, social, japanese, gika];
+for (const s of SUBJECTS) for (const u of s.units) {
+  const have = new Set((u.qs || []).map(r => r[0]));
+  const add = (EXTRA[u.id] || []).filter(r => !have.has(r[0]));
+  if (add.length) u.qs = [...(u.qs || []), ...add];
+}
 export const UNIT_MAP: Record<string, { unit: Unit; subj: Subject }> = {};
 for (const s of SUBJECTS) for (const u of s.units) UNIT_MAP[u.id] = { unit: u, subj: s };
 export const DEFAULT_SCOPE = SUBJECTS.flatMap(s => s.units.filter(u => u.tag === '2学期').map(u => u.id));
