@@ -154,7 +154,7 @@ export default function App() {
     logout: () => { localStorage.removeItem(PIN_KEY); ready.current = false; setPin(''); setCs({ s: 'off' }); },
     sync: () => { if (pin) pull(pin); },
   };
-  useEffect(() => window.scrollTo(0, 0), [view]);
+  useEffect(() => { window.scrollTo(0, 0); }, [view]);
 
   const [nav_n, setNavN] = useState(0);
   const go = (v: View) => { setNavN(n => n + 1); setView(v); };
